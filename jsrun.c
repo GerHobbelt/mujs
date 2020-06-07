@@ -469,7 +469,7 @@ int js_isarrayindex(js_State *J, const char *p, int *idx)
 static void js_pushrune(js_State *J, Rune rune)
 {
 	char buf[UTFmax + 1];
-	if (rune > 0) {
+	if (rune >= 0) {
 		buf[runetochar(buf, &rune)] = 0;
 		js_pushstring(J, buf);
 	} else {
@@ -610,6 +610,8 @@ static void jsR_setproperty(js_State *J, js_Object *obj, const char *name)
 			if (J->strict)
 				if (ref->getter)
 					js_typeerror(J, "setting property '%s' that only has a getter", name);
+			if (ref->atts & JS_READONLY)
+				goto readonly;
 		}
 	}
 
