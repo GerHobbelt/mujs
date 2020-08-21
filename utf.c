@@ -37,7 +37,7 @@ enum
 	Rune1	= (1<<(Bit1+0*Bitx))-1,		/* 0000 0000 0000 0000 0111 1111 */
 	Rune2	= (1<<(Bit2+1*Bitx))-1,		/* 0000 0000 0000 0111 1111 1111 */
 	Rune3	= (1<<(Bit3+2*Bitx))-1,		/* 0000 0000 1111 1111 1111 1111 */
-	Rune4	= (1<<(Bit4+3*Bitx))-1,		/* 0011 1111 1111 1111 1111 1111 */
+	Rune4	= (1<<(Bit4+3*Bitx))-1,		/* 0001 1111 1111 1111 1111 1111 */
 
 	Maskx	= (1<<Bitx)-1,			/* 0011 1111 */
 	Testx	= Maskx ^ 0xFF,			/* 1100 0000 */
@@ -133,8 +133,8 @@ runetochar(char *str, const Rune *rune)
 
 	/* overlong null character */
 	if (c == 0) {
-		str[0] = 0xc0;
-		str[1] = 0x80;
+		str[0] = (char)0xc0;
+		str[1] = (char)0x80;
 		return 2;
 	}
 
