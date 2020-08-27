@@ -53,8 +53,8 @@ static __inline int signbit(double x) { __int64 i; memcpy(&i, &x, 8); return i>>
 #define nelem(a) (int)(sizeof (a) / sizeof (a)[0])
 
 void *js_malloc(js_State *J, int size);
-void *js_realloc(js_State *J, void *ptr, int size);
-void js_free(js_State *J, void *ptr);
+void *js_realloc(js_State *J, const void *ptr, int size);
+void js_free(js_State *J, const void *ptr);
 
 typedef struct js_Regexp js_Regexp;
 typedef struct js_Value js_Value;
