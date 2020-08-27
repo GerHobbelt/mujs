@@ -37,9 +37,9 @@ void *js_malloc(js_State *J, int size)
 	return ptr;
 }
 
-void *js_realloc(js_State *J, void *ptr, int size)
+void *js_realloc(js_State *J, const void *ptrOrig, int size)
 {
-	ptr = J->alloc(J->actx, ptr, size);
+	void *ptr = J->alloc(J->actx, (void *)ptrOrig, size);
 	if (!ptr)
 		js_outofmemory(J);
 	return ptr;
@@ -53,9 +53,9 @@ char *js_strdup(js_State *J, const char *s)
 	return p;
 }
 
-void js_free(js_State *J, void *ptr)
+void js_free(js_State *J, const void *ptr)
 {
-	J->alloc(J->actx, ptr, 0);
+	J->alloc(J->actx, (void *)ptr, 0);
 }
 
 js_String *jsV_newmemstring(js_State *J, const char *s, int n)
