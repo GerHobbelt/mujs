@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if defined(WIN32) || defined(WIN64)
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <errno.h>
 
 #include "mujs.h"
@@ -68,7 +72,7 @@ void rl_insert(void) { }
 char *readline(const char *prompt)
 {
 	static char line[500], *p;
-	int n;
+	size_t n;
 	fputs(prompt, stdout);
 	p = fgets(line, sizeof line, stdin);
 	if (p) {
@@ -139,7 +143,7 @@ static void jsB_read(js_State *J)
 	const char *filename = js_tostring(J, 1);
 	FILE *f;
 	char *s;
-	int n, t;
+	size_t n, t;
 
 	f = fopen(filename, "rb");
 	if (!f) {
@@ -196,7 +200,7 @@ static void jsB_readline(js_State *J)
 
 static void jsB_quit(js_State *J)
 {
-	exit(js_tonumber(J, 1));
+	exit((int)js_tonumber(J, 1));
 }
 
 static void jsB_repr(js_State *J)
@@ -245,8 +249,8 @@ static int eval_print(js_State *J, const char *source)
 
 static char *read_stdin(void)
 {
-	int n = 0;
-	int t = 512;
+	size_t n = 0;
+	size_t t = 512;
 	char *s = NULL;
 
 	for (;;) {

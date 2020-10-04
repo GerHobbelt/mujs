@@ -1,3 +1,5 @@
+#ifndef MUJS_ALL_FILES
+
 #include "jsarray.c"
 #include "jsboolean.c"
 #include "jsbuiltin.c"
@@ -25,3 +27,5 @@
 #include "regexp.c"
 #include "utf.c"
 #include "utftype.c"
+
+#endif
