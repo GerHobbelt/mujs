@@ -353,7 +353,7 @@ main(int argc, char **argv)
 	}
 
 	if (interactive) {
-		if (isatty(0)) {
+		if (_isatty(0)) {
 			using_history();
 			rl_bind_key('\t', rl_insert);
 			input = readline(PS1);
