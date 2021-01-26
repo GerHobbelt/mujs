@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#if defined(WIN32) || defined(WIN64)
+#ifdef _MSC_VER
 #include <io.h>
 #else
 #include <unistd.h>
