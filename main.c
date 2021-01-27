@@ -115,13 +115,6 @@ static void jsB_compile(js_State *J)
 	js_loadstring(J, filename, source);
 }
 
-static void jsB_compile(js_State *J)
-{
-	const char *source = js_tostring(J, 1);
-	const char *filename = js_isdefined(J, 2) ? js_tostring(J, 2) : "[string]";
-	js_loadstring(J, filename, source);
-}
-
 static void jsB_print(js_State *J)
 {
 	int i, top = js_gettop(J);
