@@ -285,8 +285,11 @@ static void usage(void)
 	exit(1);
 }
 
+#ifndef MUJS_MAIN
+#define MUJS_MAIN	main
+#endif
 int
-main(int argc, char **argv)
+MUJS_MAIN(int argc, char** argv)
 {
 	char *input;
 	js_State *J;
