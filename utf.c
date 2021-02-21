@@ -16,33 +16,35 @@
 
 #include "utf.h"
 
+// NOTE: this is a near-duplicate of part of the code in mupdf/source/fitz/string.c
+
 typedef unsigned char uchar;
 
 enum
 {
-	Bit1	= 7,
-	Bitx	= 6,
-	Bit2	= 5,
-	Bit3	= 4,
-	Bit4	= 3,
-	Bit5	= 2,
+	Bit1 = 7,
+	Bitx = 6,
+	Bit2 = 5,
+	Bit3 = 4,
+	Bit4 = 3,
+	Bit5 = 2,
 
-	T1	= ((1<<(Bit1+1))-1) ^ 0xFF,	/* 0000 0000 */
-	Tx	= ((1<<(Bitx+1))-1) ^ 0xFF,	/* 1000 0000 */
-	T2	= ((1<<(Bit2+1))-1) ^ 0xFF,	/* 1100 0000 */
-	T3	= ((1<<(Bit3+1))-1) ^ 0xFF,	/* 1110 0000 */
-	T4	= ((1<<(Bit4+1))-1) ^ 0xFF,	/* 1111 0000 */
-	T5	= ((1<<(Bit5+1))-1) ^ 0xFF,	/* 1111 1000 */
+	T1 = ((1 << (Bit1 + 1)) - 1) ^ 0xFF, /* 0000 0000 */
+	Tx = ((1 << (Bitx + 1)) - 1) ^ 0xFF, /* 1000 0000 */
+	T2 = ((1 << (Bit2 + 1)) - 1) ^ 0xFF, /* 1100 0000 */
+	T3 = ((1 << (Bit3 + 1)) - 1) ^ 0xFF, /* 1110 0000 */
+	T4 = ((1 << (Bit4 + 1)) - 1) ^ 0xFF, /* 1111 0000 */
+	T5 = ((1 << (Bit5 + 1)) - 1) ^ 0xFF, /* 1111 1000 */
 
-	Rune1	= (1<<(Bit1+0*Bitx))-1,		/* 0000 0000 0000 0000 0111 1111 */
-	Rune2	= (1<<(Bit2+1*Bitx))-1,		/* 0000 0000 0000 0111 1111 1111 */
-	Rune3	= (1<<(Bit3+2*Bitx))-1,		/* 0000 0000 1111 1111 1111 1111 */
-	Rune4	= (1<<(Bit4+3*Bitx))-1,		/* 0001 1111 1111 1111 1111 1111 */
+	Rune1 = (1 << (Bit1 + 0 * Bitx)) - 1, /* 0000 0000 0111 1111 */
+	Rune2 = (1 << (Bit2 + 1 * Bitx)) - 1, /* 0000 0111 1111 1111 */
+	Rune3 = (1 << (Bit3 + 2 * Bitx)) - 1, /* 1111 1111 1111 1111 */
+	Rune4 = (1 << (Bit4 + 3 * Bitx)) - 1, /* 0001 1111 1111 1111 1111 1111 */
 
-	Maskx	= (1<<Bitx)-1,			/* 0011 1111 */
-	Testx	= Maskx ^ 0xFF,			/* 1100 0000 */
+	Maskx = (1 << Bitx) - 1,	/* 0011 1111 */
+	Testx = Maskx ^ 0xFF,	/* 1100 0000 */
 
-	Bad	= Runeerror
+	Bad = Runeerror,
 };
 
 int
