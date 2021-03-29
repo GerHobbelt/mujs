@@ -1353,7 +1353,7 @@ static void jsR_run(js_State *J, js_Function *F)
 	J->strict = F->strict;
 
 #define READSTRING() \
-	memcpy(&str, pc, sizeof(str)); \
+	memcpy((void *)&str, pc, sizeof(str)); \
 	pc += sizeof(str) / sizeof(*pc)
 
 	while (1) {
