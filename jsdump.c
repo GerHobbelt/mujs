@@ -269,7 +269,7 @@ static void pstr(const char *s)
 		case '\r': ps("\\r"); break;
 		case '\t': ps("\\t"); break;
 		default:
-			if (c < ' ' || c > 127) {
+			if (c < ' ' || c >= 127) {
 				ps("\\u");
 				pc(HEX[(c>>12)&15]);
 				pc(HEX[(c>>8)&15]);
