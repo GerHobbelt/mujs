@@ -26,6 +26,5 @@
 #include "jsvalue.c"
 #include "regexp.c"
 #include "utf.c"
-#include "utftype.c"
 
 #endif
