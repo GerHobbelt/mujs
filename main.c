@@ -12,7 +12,7 @@
 
 static char *xoptarg; /* Global argument pointer. */
 static int xoptind = 0; /* Global argv index. */
-static int xgetopt(int argc, char *argv[], char *optstring)
+static int xgetopt(int argc, const char** argv, char *optstring)
 {
 	static char *scan = NULL; /* Private scan pointer. */
 
@@ -292,7 +292,7 @@ static void usage(void)
 #define MUJS_MAIN	main
 #endif
 int
-MUJS_MAIN(int argc, char** argv)
+MUJS_MAIN(int argc, const char** argv)
 {
 	char *input;
 	js_State *J;

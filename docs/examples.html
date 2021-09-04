@@ -28,7 +28,7 @@
 #include &lt;stdio.h&gt;
 #include &lt;mujs.h&gt;
 
-int main(int argc, char **argv)
+int main(int argc, const char** argv)
 {
 	char line[256];
 	js_State *J = js_newstate(NULL, NULL, JS_STRICT);
@@ -51,7 +51,7 @@ static void hello(js_State *J)
 	js_pushundefined(J);
 }
 
-int main(int argc, char **argv)
+int main(int argc, const char** argv)
 {
 	js_State *J = js_newstate(NULL, NULL, JS_STRICT);
 

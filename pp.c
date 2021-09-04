@@ -85,7 +85,7 @@ void js_ppfile(js_State *J, const char *filename, int minify)
 #define MUJS_PRETTYPRINT_MAIN	main
 #endif
 int
-MUJS_PRETTYPRINT_MAIN(int argc, char **argv)
+MUJS_PRETTYPRINT_MAIN(int argc, const char** argv)
 {
 	js_State *J;
 	int minify = 0;
