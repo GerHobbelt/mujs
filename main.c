@@ -359,6 +359,8 @@ MUJS_MAIN(int argc, const char** argv)
 	}
 
 	if (interactive) {
+		printf("Welcome to MuJS %d.%d.%d.\n",
+			JS_VERSION_MAJOR, JS_VERSION_MINOR, JS_VERSION_PATCH);
 		if (_isatty(0)) {
 			using_history();
 			rl_bind_key('\t', rl_insert);
