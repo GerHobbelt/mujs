@@ -4,22 +4,6 @@
 
 #include <time.h>
 
-#define JS_RAND_MAX (0x7fffffff)
-
-static unsigned int jsM_rand_temper(unsigned int x)
-{
-	x ^= x>>11;
-	x ^= x<<7 & 0x9D2C5680;
-	x ^= x<<15 & 0xEFC60000;
-	x ^= x>>18;
-	return x;
-}
-
-static int jsM_rand_r(unsigned int *seed)
-{
-	return jsM_rand_temper(*seed = *seed * 1103515245 + 12345)/2;
-}
-
 static double jsM_round(double x)
 {
 	if (isnan(x)) return x;
@@ -94,7 +78,10 @@ static void Math_pow(js_State *J)
 
 static void Math_random(js_State *J)
 {
-	js_pushnumber(J, jsM_rand_r(&J->seed) / (JS_RAND_MAX + 1.0));
+	/* Use a Lehmer / Park-Miller random number generator */
+	/* 1 <= seed < 0x7fffffff */
+	J->seed = J->seed * 48271 % 0x7fffffff;
+	js_pushnumber(J, (J->seed - 1) / 0x7ffffffe);
 }
 
 static void Math_round(js_State *J)
@@ -156,7 +143,7 @@ static void Math_min(js_State *J)
 
 void jsB_initmath(js_State *J)
 {
-	J->seed = time(NULL);
+	J->seed = time(NULL) * 48271 % 0x7fffffff;
 
 	js_pushobject(J, jsV_newobject(J, JS_CMATH, J->Object_prototype));
 	{
