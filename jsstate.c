@@ -8,16 +8,6 @@
 #include <assert.h>
 #include <errno.h>
 
-static int js_ptry(js_State *J) {
-	if (J->trytop == JS_TRYLIMIT) {
-		STACK[TOP].type = JS_TLITSTR;
-		STACK[TOP].u.litstr = "exception stack overflow";
-		++TOP;
-		return 1;
-	}
-	return 0;
-}
-
 static void *js_defaultalloc(void *actx, void *ptr, int size)
 {
 	if (size == 0) {

@@ -1312,6 +1312,16 @@ static void jsR_dumpenvironment(js_State *J, js_Environment *E, int d)
 		jsR_dumpenvironment(J, E->outer, d+1);
 }
 
+int js_ptry(js_State* J) {
+	if (J->trytop == JS_TRYLIMIT) {
+		STACK[TOP].type = JS_TLITSTR;
+		STACK[TOP].u.litstr = "exception stack overflow";
+		++TOP;
+		return 1;
+	}
+	return 0;
+}
+
 void js_stacktrace(js_State *J)
 {
 	int n;
