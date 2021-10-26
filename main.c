@@ -10,11 +10,11 @@
 
 #include "mujs.h"
 
-static char *xoptarg; /* Global argument pointer. */
+static const char *xoptarg; /* Global argument pointer. */
 static int xoptind = 0; /* Global argv index. */
 static int xgetopt(int argc, const char** argv, char *optstring)
 {
-	static char *scan = NULL; /* Private scan pointer. */
+	static const char *scan = NULL; /* Private scan pointer. */
 
 	char c;
 	char *place;
