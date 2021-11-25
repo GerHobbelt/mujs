@@ -2,8 +2,14 @@
 #include "jsvalue.h"
 #include "jsbuiltin.h"
 
-#include <time.h>
+#if defined(_MSC_VER) && (_MSC_VER < 1700) /* VS2012 has stdint.h */
+typedef unsigned int uint32_t;
+typedef unsigned __int64 uint64_t;
+#else
+#include <stdint.h>
+#endif
 
+#include <time.h>
 static double jsM_round(double x)
 {
 	if (isnan(x)) return x;
@@ -78,10 +84,21 @@ static void Math_pow(js_State *J)
 
 static void Math_random(js_State *J)
 {
-	/* Use a Lehmer / Park-Miller random number generator */
-	/* 1 <= seed < 0x7fffffff */
-	J->seed = J->seed * 48271 % 0x7fffffff;
-	js_pushnumber(J, (J->seed - 1) / 0x7ffffffe);
+	/* Lehmer generator with a=48271 and m=2^31-1 */
+	/* Park & Miller (1988). Random Number Generators: Good ones are hard to find. */
+	J->seed = (uint64_t) J->seed * 48271 % 0x7fffffff;
+	js_pushnumber(J, (double) J->seed / 0x7fffffff);
+}
+
+static void Math_init_random(js_State *J)
+{
+	/* Pick initial seed by scrambling current time with Xorshift. */
+	/* Marsaglia (2003). Xorshift RNGs. */
+	J->seed = time(0) + 123;
+	J->seed ^= J->seed << 13;
+	J->seed ^= J->seed >> 17;
+	J->seed ^= J->seed << 5;
+	J->seed %= 0x7fffffff;
 }
 
 static void Math_round(js_State *J)
@@ -143,8 +160,7 @@ static void Math_min(js_State *J)
 
 void jsB_initmath(js_State *J)
 {
-	J->seed = time(NULL) * 48271 % 0x7fffffff;
-
+	Math_init_random(J);
 	js_pushobject(J, jsV_newobject(J, JS_CMATH, J->Object_prototype));
 	{
 		jsB_propn(J, "E", 2.7182818284590452354);
