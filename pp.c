@@ -81,11 +81,12 @@ void js_ppfile(js_State *J, const char *filename, int minify)
 	fclose(f);
 }
 
-#ifndef MUJS_PRETTYPRINT_MAIN
-#define MUJS_PRETTYPRINT_MAIN	main
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      mujs_prettyprint_main(cnt, arr)
 #endif
-int
-MUJS_PRETTYPRINT_MAIN(int argc, const char** argv)
+
+int main(int argc, const char** argv)
 {
 	js_State *J;
 	int minify = 0;
