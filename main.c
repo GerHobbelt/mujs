@@ -10,6 +10,8 @@
 
 #include "mujs.h"
 
+#include "monolithic_examples.h"
+
 static const char *xoptarg; /* Global argument pointer. */
 static int xoptind = 0; /* Global argv index. */
 

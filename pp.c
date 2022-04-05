@@ -10,6 +10,8 @@
 #include "jsi.h"
 #include "jsparse.h"
 
+#include "monolithic_examples.h"
+
 static void js_ppstring(js_State *J, const char *filename, const char *source, int minify)
 {
 	js_Ast *P;
