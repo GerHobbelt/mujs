@@ -233,6 +233,10 @@ static const char *stacktrace_js =
 	"};\n"
 ;
 
+static const char *console_js =
+	"var console = { log: print, debug: print, warn: print, error: print };"
+;
+
 static int eval_print(js_State *J, const char *source)
 {
 	if (js_ploadstring(J, "[stdin]", source)) {
@@ -343,6 +347,7 @@ int main(int argc, const char** argv)
 
 	js_dostring(J, require_js);
 	js_dostring(J, stacktrace_js);
+	js_dostring(J, console_js);
 
 	if (xoptind == argc) {
 		interactive = 1;
