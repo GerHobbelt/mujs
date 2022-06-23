@@ -242,7 +242,7 @@ struct js_State
 	js_Object *TypeError_prototype;
 	js_Object *URIError_prototype;
 
-	unsigned int seed; /* Math.random seed */
+	double seed; /* Math.random seed */
 
 	char scratch[12]; /* scratch buffer for iterating over array indices */
 
