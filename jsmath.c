@@ -2,13 +2,6 @@
 #include "jsvalue.h"
 #include "jsbuiltin.h"
 
-#if defined(_MSC_VER) && (_MSC_VER < 1700) /* VS2012 has stdint.h */
-typedef unsigned int uint32_t;
-typedef unsigned __int64 uint64_t;
-#else
-#include <stdint.h>
-#endif
-
 #include <time.h>
 
 static double jsM_round(double x)
@@ -85,21 +78,23 @@ static void Math_pow(js_State *J)
 
 static void Math_random(js_State *J)
 {
-	/* Lehmer generator with a=48271 and m=2^31-1 */
-	/* Park & Miller (1988). Random Number Generators: Good ones are hard to find. */
-	J->seed = (uint64_t) J->seed * 48271 % 0x7fffffff;
-	js_pushnumber(J, (double) J->seed / 0x7fffffff);
+	// A Lehmer (MLCG) RNG using doubles.
+	// Parameters from Pierre l'Ecuyer's paper:
+	// https://www.ams.org/journals/mcom/1999-68-225/S0025-5718-99-00996-5/S0025-5718-99-00996-5.pdf
+	// m = 2^35 - 31
+	J->seed = J->seed * fmod(200105.0, 34359738337.0);
+	js_pushnumber(J, J->seed / 34359738337.0);
 }
 
 static void Math_init_random(js_State *J)
 {
 	/* Pick initial seed by scrambling current time with Xorshift. */
 	/* Marsaglia (2003). Xorshift RNGs. */
-	J->seed = time(0) + 123;
-	J->seed ^= J->seed << 13;
-	J->seed ^= J->seed >> 17;
-	J->seed ^= J->seed << 5;
-	J->seed %= 0x7fffffff;
+	unsigned int seed = time(0) + 123;
+	seed ^= seed << 13;
+	seed ^= seed >> 17;
+	seed ^= seed << 5;
+	J->seed = seed;
 }
 
 static void Math_round(js_State *J)
