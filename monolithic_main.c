@@ -2,9 +2,7 @@
 #define BUILD_MONOLITHIC 1
 #include "monolithic_examples.h"
 
-#include "monolithic_examples.h"
-
-#define USAGE_NAME   "mujs"
+#define USAGE_NAME   "misctools"
 
 #include "monolithic_main_internal_defs.h"
 
