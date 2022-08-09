@@ -317,6 +317,10 @@ int main(int argc, const char** argv)
 	}
 
 	J = js_newstate(NULL, NULL, strict ? JS_STRICT : 0);
+	if (!J) {
+		fprintf(stderr, "Could not initialize MuJS.\n");
+		exit(1);
+	}
 
 	js_newcfunction(J, jsB_gc, "gc", 0);
 	js_setglobal(J, "gc");
