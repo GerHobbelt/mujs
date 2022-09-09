@@ -29,7 +29,7 @@ extern "C" {
 #ifdef __printflike
 #define JS_PRINTFLIKE __printflike
 #else
-#if __GNUC__ > 2 || __GNUC__ == 2 && __GNUC_MINOR__ >= 7
+#if defined(__GNUC__) && (__GNUC__ > 2 || __GNUC__ == 2 && __GNUC_MINOR__ >= 7)
 #define JS_PRINTFLIKE(fmtarg, firstvararg) \
 	__attribute__((__format__ (__printf__, fmtarg, firstvararg)))
 #else
