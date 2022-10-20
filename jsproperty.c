@@ -298,14 +298,14 @@ js_Object *jsV_newiterator(js_State *J, js_Object *obj, int own)
 	return io;
 }
 
-const char *jsV_nextiterator(js_State *J, js_Object *io)
+const char *jsV_nextiterator(js_State *J, js_Object *io, char buf[12])
 {
 	if (io->type != JS_CITERATOR)
 		js_typeerror(J, "not an iterator");
 	if (io->u.iter.i < io->u.iter.n) {
-		js_itoa(J->scratch, io->u.iter.i);
+		js_itoa(buf, io->u.iter.i);
 		io->u.iter.i++;
-		return J->scratch;
+		return buf;
 	}
 	while (io->u.iter.current) {
 		const char *name = io->u.iter.current->name;
@@ -327,7 +327,7 @@ void jsV_resizearray(js_State *J, js_Object *obj, int newlen)
 	if (newlen < obj->u.a.length) {
 		if (obj->u.a.length > obj->count * 2) {
 			js_Object *it = jsV_newiterator(J, obj, 1);
-			while ((s = jsV_nextiterator(J, it))) {
+			while ((s = jsV_nextiterator(J, it, buf))) {
 				k = jsV_numbertointeger(jsV_stringtonumber(J, s));
 				if (k >= newlen && !strcmp(s, jsV_numbertostring(J, buf, k)))
 					jsV_delproperty(J, obj, s);

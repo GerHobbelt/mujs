@@ -180,7 +180,7 @@ void js_newuserdatax(js_State *J, const char *tag, void *data, js_HasProperty ha
 void js_newregexp(js_State *J, const char *pattern, int flags);
 
 void js_pushiterator(js_State *J, int idx, int own);
-const char *js_nextiterator(js_State *J, int idx);
+const char *js_nextiterator(js_State *J, int idx, char buf[12]);
 
 int js_isdefined(js_State *J, int idx);
 int js_isundefined(js_State *J, int idx);
