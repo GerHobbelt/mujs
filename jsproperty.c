@@ -21,17 +21,16 @@
 */
 
 static js_Property sentinel = {
-	"",
 	&sentinel, &sentinel,
 	0, 0,
 	{ {0}, {0}, JS_TUNDEFINED },
-	NULL, NULL
+	NULL, NULL, ""
 };
 
 static js_Property *newproperty(js_State *J, js_Object *obj, const char *name)
 {
-	js_Property *node = js_malloc(J, sizeof *node);
-	node->name = js_intern(J, name);
+	int n = strlen(name) + 1;
+	js_Property *node = js_malloc(J, offsetof(js_Property, name) + n);
 	node->left = node->right = &sentinel;
 	node->level = 1;
 	node->atts = 0;
@@ -39,6 +38,7 @@ static js_Property *newproperty(js_State *J, js_Object *obj, const char *name)
 	node->value.u.number = 0;
 	node->getter = NULL;
 	node->setter = NULL;
+	memcpy(node->name, name, n);
 	++obj->count;
 	++J->gccounter;
 	return node;
@@ -104,33 +104,31 @@ static void freeproperty(js_State *J, js_Object *obj, js_Property *node)
 	--obj->count;
 }
 
-static js_Property *delete(js_State *J, js_Object *obj, js_Property *node, const char *name)
+static js_Property *unlink(js_State *J, js_Object *obj, js_Property *node, const char *name, js_Property **garbage)
 {
 	js_Property *temp, *succ;
 
 	if (node != &sentinel) {
 		int c = strcmp(name, node->name);
 		if (c < 0) {
-			node->left = delete(J, obj, node->left, name);
+			node->left = unlink(J, obj, node->left, name, garbage);
 		} else if (c > 0) {
-			node->right = delete(J, obj, node->right, name);
+			node->right = unlink(J, obj, node->right, name, garbage);
 		} else {
 			if (node->left == &sentinel) {
-				temp = node;
+				*garbage = node;
 				node = node->right;
-				freeproperty(J, obj, temp);
 			} else if (node->right == &sentinel) {
-				temp = node;
+				*garbage = node;
 				node = node->left;
-				freeproperty(J, obj, temp);
 			} else {
+				*garbage = node;
 				succ = node->right;
 				while (succ->left != &sentinel)
 					succ = succ->left;
-				node->name = succ->name;
-				node->atts = succ->atts;
-				node->value = succ->value;
-				node->right = delete(J, obj, node->right, succ->name);
+				succ->right = unlink(J, obj, node->right, succ->name, &temp);
+				succ->left = node->left;
+				node = succ;
 			}
 		}
 
@@ -147,6 +145,15 @@ static js_Property *delete(js_State *J, js_Object *obj, js_Property *node, const
 		}
 	}
 	return node;
+}
+
+static js_Property *delete(js_State *J, js_Object *obj, js_Property *tree, const char *name)
+{
+	js_Property *garbage = NULL;
+	tree = unlink(J, obj, tree, name, &garbage);
+	if (garbage != NULL)
+		freeproperty(J, obj, garbage);
+	return tree;
 }
 
 js_Object *jsV_newobject(js_State *J, enum js_Class type, js_Object *prototype)
