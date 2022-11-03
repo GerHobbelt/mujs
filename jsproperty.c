@@ -236,9 +236,10 @@ void jsV_delproperty(js_State *J, js_Object *obj, const char *name)
 /* Flatten hierarchy of enumerable properties into an iterator object */
 
 static js_Iterator *itnewnode(js_State *J, const char *name, js_Iterator *next) {
-	js_Iterator *node = js_malloc(J, sizeof(js_Iterator));
-	node->name = name;
+	int n = strlen(name) + 1;
+	js_Iterator *node = js_malloc(J, offsetof(js_Iterator, name) + n);
 	node->next = next;
+	memcpy(node->name, name, n);
 	return node;
 }
 
@@ -279,6 +280,7 @@ js_Object *jsV_newiterator(js_State *J, js_Object *obj, int own)
 	} else {
 		io->u.iter.head = itflatten(J, obj);
 	}
+	io->u.iter.current = io->u.iter.head;
 
 	if (obj->type == JS_CSTRING)
 		io->u.iter.n = obj->u.s.length;
@@ -291,7 +293,6 @@ js_Object *jsV_newiterator(js_State *J, js_Object *obj, int own)
 
 const char *jsV_nextiterator(js_State *J, js_Object *io)
 {
-	int k;
 	if (io->type != JS_CITERATOR)
 		js_typeerror(J, "not an iterator");
 	if (io->u.iter.i < io->u.iter.n) {
@@ -299,19 +300,11 @@ const char *jsV_nextiterator(js_State *J, js_Object *io)
 		io->u.iter.i++;
 		return J->scratch;
 	}
-	while (io->u.iter.head) {
-		js_Iterator *next = io->u.iter.head->next;
-		const char *name = io->u.iter.head->name;
-		js_free(J, io->u.iter.head);
-		io->u.iter.head = next;
+	while (io->u.iter.current) {
+		const char *name = io->u.iter.current->name;
+		io->u.iter.current = io->u.iter.current->next;
 		if (jsV_getproperty(J, io->u.iter.target, name))
 			return name;
-		if (io->u.iter.target->type == JS_CSTRING)
-			if (js_isarrayindex(J, name, &k) && k < io->u.iter.target->u.s.length)
-				return name;
-		if (io->u.iter.target->type == JS_CARRAY && io->u.iter.target->u.a.simple)
-			if (js_isarrayindex(J, name, &k) && k < io->u.iter.target->u.a.length)
-				return name;
 	}
 	return NULL;
 }

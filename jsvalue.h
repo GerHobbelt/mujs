@@ -114,7 +114,7 @@ struct js_Object
 		struct {
 			js_Object *target;
 			int i, n; /* for array part */
-			js_Iterator *head; /* for object part */
+			js_Iterator *head, *current; /* for object part */
 		} iter;
 		struct {
 			const char *tag;
@@ -143,8 +143,8 @@ struct js_Property
 
 struct js_Iterator
 {
-	const char *name;
 	js_Iterator *next;
+	char name[1];
 };
 
 /* jsrun.c */
