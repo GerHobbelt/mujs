@@ -73,7 +73,7 @@ static void Op_hasOwnProperty(js_State *J)
 	}
 
 	if (self->type == JS_CARRAY && self->u.a.simple) {
-		if (js_isarrayindex(J, name, &k) && k >= 0 && k < self->u.a.length) {
+		if (js_isarrayindex(J, name, &k) && k >= 0 && k < self->u.a.flat_length) {
 			js_pushboolean(J, 1);
 			return;
 		}
@@ -160,7 +160,7 @@ static int O_getOwnPropertyNames_walk(js_State *J, js_Property *ref, int i)
 {
 	if (ref->left->level)
 		i = O_getOwnPropertyNames_walk(J, ref->left, i);
-	js_pushliteral(J, ref->name);
+	js_pushstring(J, ref->name);
 	js_setindex(J, -2, i++);
 	if (ref->right->level)
 		i = O_getOwnPropertyNames_walk(J, ref->right, i);
@@ -189,7 +189,7 @@ static void O_getOwnPropertyNames(js_State *J)
 		js_pushliteral(J, "length");
 		js_setindex(J, -2, i++);
 		if (obj->u.a.simple) {
-			for (k = 0; k < obj->u.a.length; ++k) {
+			for (k = 0; k < obj->u.a.flat_length; ++k) {
 				js_itoa(name, k);
 				js_pushstring(J, name);
 				js_setindex(J, -2, i++);
@@ -352,7 +352,7 @@ static int O_keys_walk(js_State *J, js_Property *ref, int i)
 	if (ref->left->level)
 		i = O_keys_walk(J, ref->left, i);
 	if (!(ref->atts & JS_DONTENUM)) {
-		js_pushliteral(J, ref->name);
+		js_pushstring(J, ref->name);
 		js_setindex(J, -2, i++);
 	}
 	if (ref->right->level)

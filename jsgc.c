@@ -42,6 +42,10 @@ static void jsG_freeobject(js_State *J, js_Object *obj)
 		js_free(J, obj->u.r.source);
 		js_regfreex(J->alloc, J->actx, obj->u.r.prog);
 	}
+	if (obj->type == JS_CSTRING) {
+		if (obj->u.s.string != obj->u.s.shrstr)
+			js_free(J, obj->u.s.string);
+	}
 	if (obj->type == JS_CARRAY && obj->u.a.simple)
 		js_free(J, obj->u.a.array);
 	if (obj->type == JS_CITERATOR)
@@ -104,7 +108,7 @@ static void jsG_scanobject(js_State *J, int mark, js_Object *obj)
 		jsG_markobject(J, mark, obj->prototype);
 	if (obj->type == JS_CARRAY && obj->u.a.simple) {
 		int i;
-		for (i = 0; i < obj->u.a.length; ++i) {
+		for (i = 0; i < obj->u.a.flat_length; ++i) {
 			js_Value *v = &obj->u.a.array[i];
 			if (v->type == JS_TMEMSTR && v->u.memstr->gcmark != mark)
 				v->u.memstr->gcmark = mark;
