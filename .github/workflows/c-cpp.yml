@@ -17,4 +17,6 @@ jobs:
       run: make
     - name: Archive code coverage results
       uses: actions/upload-artifact@v3
+      with:
+          path: output/
 
