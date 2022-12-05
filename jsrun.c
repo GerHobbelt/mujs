@@ -1039,9 +1039,9 @@ void js_pushiterator(js_State *J, int idx, int own)
 	js_pushobject(J, jsV_newiterator(J, js_toobject(J, idx), own));
 }
 
-const char *js_nextiterator(js_State *J, int idx)
+const char *js_nextiterator(js_State *J, int idx, char buf[12])
 {
-	return jsV_nextiterator(J, js_toobject(J, idx));
+	return jsV_nextiterator(J, js_toobject(J, idx), buf);
 }
 
 /* Environment records */
@@ -1761,8 +1761,9 @@ static void jsR_run(js_State *J, js_Function *F)
 
 		case OP_NEXTITER:
 			if (js_isobject(J, -1)) {
+				char buf[12];
 				obj = js_toobject(J, -1);
-				str = jsV_nextiterator(J, obj);
+				str = jsV_nextiterator(J, obj, buf);
 				if (str) {
 					js_pushstring(J, str);
 					js_pushboolean(J, 1);

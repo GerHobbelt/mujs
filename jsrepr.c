@@ -82,6 +82,7 @@ static void reprident(js_State *J, js_Buffer **sb, const char *name)
 
 static void reprobject(js_State *J, js_Buffer **sb)
 {
+	char buf[32];
 	const char *key;
 	int i, n;
 
@@ -98,7 +99,7 @@ static void reprobject(js_State *J, js_Buffer **sb)
 	n = 0;
 	js_putc(J, sb, '{');
 	js_pushiterator(J, -1, 1);
-	while ((key = js_nextiterator(J, -1))) {
+	while ((key = js_nextiterator(J, -1, buf))) {
 		if (n++ > 0)
 			js_puts(J, sb, ", ");
 		reprident(J, sb, key);

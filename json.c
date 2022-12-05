@@ -137,7 +137,7 @@ static void jsonrevive(js_State *J, const char *name)
 			}
 		} else {
 			js_pushiterator(J, -1, 1);
-			while ((key = js_nextiterator(J, -1))) {
+			while ((key = js_nextiterator(J, -1, buf))) {
 				js_rot2(J);
 				jsonrevive(J, key);
 				if (js_isundefined(J, -1)) {
@@ -254,6 +254,7 @@ static int filterprop(js_State *J, const char *key)
 
 static void fmtobject(js_State *J, js_Buffer **sb, js_Object *obj, const char *gap, int level)
 {
+	char buf[32];
 	const char *key;
 	int save;
 	int i, n;
@@ -267,7 +268,7 @@ static void fmtobject(js_State *J, js_Buffer **sb, js_Object *obj, const char *g
 	n = 0;
 	js_putc(J, sb, '{');
 	js_pushiterator(J, -1, 1);
-	while ((key = js_nextiterator(J, -1))) {
+	while ((key = js_nextiterator(J, -1, buf))) {
 		if (filterprop(J, key)) {
 			save = (*sb)->n;
 			if (n) js_putc(J, sb, ',');
