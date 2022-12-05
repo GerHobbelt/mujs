@@ -104,36 +104,43 @@ static void freeproperty(js_State *J, js_Object *obj, js_Property *node)
 	--obj->count;
 }
 
-static js_Property *unlink(js_State *J, js_Object *obj, js_Property *node, const char *name, js_Property **garbage)
+static js_Property *unlinkproperty(js_Property *node, const char *name, js_Property **garbage)
 {
-	js_Property *temp, *succ;
-
+	js_Property *temp, *a, *b;
 	if (node != &sentinel) {
 		int c = strcmp(name, node->name);
 		if (c < 0) {
-			node->left = unlink(J, obj, node->left, name, garbage);
+			node->left = unlinkproperty(node->left, name, garbage);
 		} else if (c > 0) {
-			node->right = unlink(J, obj, node->right, name, garbage);
+			node->right = unlinkproperty(node->right, name, garbage);
 		} else {
-			if (node->left == &sentinel) {
-				*garbage = node;
-				node = node->right;
-			} else if (node->right == &sentinel) {
-				*garbage = node;
-				node = node->left;
-			} else {
-				*garbage = node;
-				succ = node->right;
-				while (succ->left != &sentinel)
-					succ = succ->left;
-				succ->right = unlink(J, obj, node->right, succ->name, &temp);
-				succ->left = node->left;
-				node = succ;
+			*garbage = node;
+			if (node->left == &sentinel && node->right == &sentinel) {
+				return &sentinel;
+			}
+			else if (node->left == &sentinel) {
+				a = node->right;
+				while (a->left != &sentinel)
+					a = a->left;
+				b = unlinkproperty(node->right, a->name, &temp);
+				temp->level = node->level;
+				temp->left = node->left;
+				temp->right = b;
+				node = temp;
+			}
+			else {
+				a = node->left;
+				while (a->right != &sentinel)
+					a = a->right;
+				b = unlinkproperty(node->left, a->name, &temp);
+				temp->level = node->level;
+				temp->left = b;
+				temp->right = node->right;
+				node = temp;
 			}
 		}
 
-		if (node->left->level < node->level - 1 ||
-			node->right->level < node->level - 1)
+		if (node->left->level < node->level - 1 || node->right->level < node->level - 1)
 		{
 			if (node->right->level > --node->level)
 				node->right->level = node->level;
@@ -147,11 +154,11 @@ static js_Property *unlink(js_State *J, js_Object *obj, js_Property *node, const
 	return node;
 }
 
-static js_Property *delete(js_State *J, js_Object *obj, js_Property *tree, const char *name)
+static js_Property *deleteproperty(js_State *J, js_Object *obj, js_Property *tree, const char *name)
 {
-	js_Property *garbage = NULL;
-	tree = unlink(J, obj, tree, name, &garbage);
-	if (garbage != NULL)
+	js_Property *garbage = &sentinel;
+	tree = unlinkproperty(tree, name, &garbage);
+	if (garbage != &sentinel)
 		freeproperty(J, obj, garbage);
 	return tree;
 }
@@ -230,7 +237,7 @@ js_Property *jsV_setproperty(js_State *J, js_Object *obj, const char *name)
 
 void jsV_delproperty(js_State *J, js_Object *obj, const char *name)
 {
-	obj->properties = delete(J, obj, obj->properties, name);
+	obj->properties = deleteproperty(J, obj, obj->properties, name);
 }
 
 /* Flatten hierarchy of enumerable properties into an iterator object */
