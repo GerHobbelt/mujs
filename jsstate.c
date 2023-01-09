@@ -275,7 +275,7 @@ js_State *js_newstate(js_Alloc alloc, void *actx, int flags)
 	js_State *J;
 
 	assert(sizeof(js_Value) == 16);
-	assert(soffsetof(js_Value, type) == 15);
+	assert(soffsetof(js_Value, t.type) == 15);
 
 	if (!alloc)
 		alloc = js_defaultalloc;
