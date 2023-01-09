@@ -8,7 +8,6 @@
 #include <stdio.h>
 
 #include "jsi.h"
-#include "jsparse.h"
 
 #include "monolithic_examples.h"
 
