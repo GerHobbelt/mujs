@@ -351,7 +351,6 @@ static void Ap_splice(js_State *J)
 	if (del < 0)
 		del = 0;
 
-
 	js_newarray(J);
 
 	/* copy deleted items to return array */
