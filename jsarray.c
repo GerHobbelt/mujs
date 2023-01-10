@@ -1,6 +1,4 @@
 #include "jsi.h"
-#include "jsvalue.h"
-#include "jsbuiltin.h"
 
 int js_getlength(js_State *J, int idx)
 {
@@ -64,8 +62,8 @@ static void Ap_concat(js_State *J)
 static void Ap_join(js_State *J)
 {
 	char * volatile out = NULL;
+	const char * volatile r = NULL;
 	const char *sep;
-	const char *r;
 	int seplen;
 	int k, n, len, rlen;
 
@@ -249,8 +247,8 @@ static int sortcmp(const void *avoid, const void *bvoid)
 	double v;
 	int c;
 
-	int unx = (a->type == JS_TUNDEFINED);
-	int uny = (b->type == JS_TUNDEFINED);
+	int unx = (a->t.type == JS_TUNDEFINED);
+	int uny = (b->t.type == JS_TUNDEFINED);
 	if (unx) return !uny;
 	if (uny) return -1;
 
@@ -318,7 +316,7 @@ static void Ap_sort(js_State *J)
 		js_pushvalue(J, array[i].v);
 		js_setindex(J, 0, i);
 	}
-	for (i = n; i < len; ++i) {
+	for (i = len-i; i >= n; --i) {
 		js_delindex(J, 0, i);
 	}
 
@@ -350,7 +348,6 @@ static void Ap_splice(js_State *J)
 		del = len - start;
 	if (del < 0)
 		del = 0;
-
 
 	js_newarray(J);
 

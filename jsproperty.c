@@ -1,5 +1,4 @@
 #include "jsi.h"
-#include "jsvalue.h"
 
 #include <assert.h>
 
@@ -23,7 +22,7 @@
 static js_Property sentinel = {
 	&sentinel, &sentinel,
 	0, 0,
-	{ {0}, {0}, JS_TUNDEFINED },
+	{ { {0}, JS_TUNDEFINED } },
 	NULL, NULL, ""
 };
 
@@ -34,7 +33,7 @@ static js_Property *newproperty(js_State *J, js_Object *obj, const char *name)
 	node->left = node->right = &sentinel;
 	node->level = 1;
 	node->atts = 0;
-	node->value.type = JS_TUNDEFINED;
+	node->value.t.type = JS_TUNDEFINED;
 	node->value.u.number = 0;
 	node->getter = NULL;
 	node->setter = NULL;
@@ -293,7 +292,7 @@ js_Object *jsV_newiterator(js_State *J, js_Object *obj, int own)
 		io->u.iter.n = obj->u.s.length;
 
 	if (obj->type == JS_CARRAY && obj->u.a.simple)
-		io->u.iter.n = obj->u.a.length;
+		io->u.iter.n = obj->u.a.flat_length;
 
 	return io;
 }
