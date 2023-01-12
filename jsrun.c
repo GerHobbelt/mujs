@@ -1497,7 +1497,7 @@ static void js_dumpvalue(js_State *J, js_Value v)
 	}
 }
 
-static int js_ptry(js_State* J) {
+int js_ptry(js_State* J) {
 	if (J->trytop == JS_TRYLIMIT) {
 		STACK[TOP].t.type = JS_TLITSTR;
 		STACK[TOP].u.litstr = "exception stack overflow";
@@ -1507,7 +1507,7 @@ static int js_ptry(js_State* J) {
 	return 0;
 }
 
-static void js_stacktrace(js_State *J)
+void js_stacktrace(js_State *J)
 {
 	int n;
 	printf("stack trace:\n");
