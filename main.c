@@ -138,7 +138,26 @@ static void jsB_write(js_State *J)
 	js_pushundefined(J);
 }
 
-static void jsB_read(js_State *J)
+static void jsB_fwrite(js_State *J)
+{
+	const char *filename = js_tostring(J, 1);
+	const char *filecont = js_tostring(J, 2);
+	FILE *f;
+	
+	f = fopen(filename, "w");
+	if (!f) {
+		js_error(J, "cannot write file '%s': %s", filename, strerror(errno));
+	}
+	
+	if (fprintf(f, "%s", filecont) < 0) {
+		fclose(f);
+		js_error(J, "cannot write data in file '%s': %s", filename, strerror(errno));
+	}
+	
+	fclose(f);
+}
+
+static void jsB_fread(js_State *J)
 {
 	const char *filename = js_tostring(J, 1);
 	FILE *f;
@@ -327,12 +346,15 @@ main(int argc, char **argv)
 
 	js_newcfunction(J, jsB_print, "print", 0);
 	js_setglobal(J, "print");
-
+	
 	js_newcfunction(J, jsB_write, "write", 0);
 	js_setglobal(J, "write");
 
-	js_newcfunction(J, jsB_read, "read", 1);
-	js_setglobal(J, "read");
+	js_newcfunction(J, jsB_fwrite, "fwrite", 2);
+	js_setglobal(J, "fwrite");
+
+	js_newcfunction(J, jsB_fread, "fread", 1);
+	js_setglobal(J, "fread");
 
 	js_newcfunction(J, jsB_readline, "readline", 0);
 	js_setglobal(J, "readline");
