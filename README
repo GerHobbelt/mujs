@@ -1,5 +1,10 @@
 MuJS: an embeddable Javascript interpreter in C.
 
+ADDITIONS
+Math.randInt(min, max) 		: generates a random number between min and max
+fread("filename")      		: reads file
+fwrite("filename", data)        : writes data in file, if file doesn't exists, it create one
+
 ABOUT
 
 MuJS is a lightweight Javascript interpreter designed for embedding in
