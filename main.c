@@ -145,7 +145,15 @@ static void jsB_fwrite(js_State *J)
 	FILE *f;
 	
 	f = fopen(filename, "w");
-	if (!f) {
+	
+	if(errno != 0)
+	{
+		//fclose(f);
+		js_error(J, "cannot write file '%s': %s", filename, strerror(errno));
+	}
+	
+	if (f == NULL) {
+		fclose(f);
 		js_error(J, "cannot write file '%s': %s", filename, strerror(errno));
 	}
 	
