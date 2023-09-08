@@ -1,4 +1,4 @@
-MuJS: an embeddable Javascript interpreter in C.
+MuJS: an embeddable Javascript interpreter in C. 
 
 ADDITIONS
 Math.randInt(min, max) 		: generates a random number between min and max
@@ -46,12 +46,4 @@ DOWNLOAD
 
 The latest development source is available directly from the git repository:
 
-	git clone http://git.ghostscript.com/mujs.git
-
-REPORTING BUGS AND PROBLEMS
-
-Report bugs on the ghostscript bugzilla, with MuJS as the selected component.
-
-	http://bugs.ghostscript.com/
-
-The MuJS developers hang out on IRC in the #mupdf channel on irc.freenode.net.
+	git clone https://github.com/masrourmouad/mujs.git
