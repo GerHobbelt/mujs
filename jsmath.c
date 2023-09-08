@@ -113,6 +113,12 @@ static void Math_randInt(js_State *J)
 {
 	int min = js_tonumber(J, 1);
 	int max = js_tonumber(J, 2);
+
+	if(min > max)
+	{
+		js_error(J, "max should be bigger than max");
+	}
+	
 	js_pushnumber(J, (rand() % (max - min +1)) + min);
 }
 
