@@ -4,6 +4,7 @@ ADDITIONS
 Math.randInt(min, max) 		: generates a random number between min and max
 fread("filename")      		: reads file
 fwrite("filename", data)        : writes data in file, if file doesn't exists, it create one
+fexists("filename")             : return true when file exists, false when it dont exists
 
 ABOUT
 
