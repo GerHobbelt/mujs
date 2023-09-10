@@ -138,6 +138,24 @@ static void jsB_write(js_State *J)
 	js_pushundefined(J);
 }
 
+static void jsB_fexists(js_State *J)
+{
+	const char *filename = js_tostring(J, 1);
+	FILE *f;
+	
+	f = fopen(filename, "r");
+	
+	if(errno != 0)
+	{
+		js_pushboolean(J, 0);
+	}
+	else
+	{
+		fclose(f);
+		js_pushboolean(J, 1);
+	}
+}
+
 static void jsB_fwrite(js_State *J)
 {
 	const char *filename = js_tostring(J, 1);
@@ -148,7 +166,6 @@ static void jsB_fwrite(js_State *J)
 	
 	if(errno != 0)
 	{
-		//fclose(f);
 		js_error(J, "cannot write file '%s': %s", filename, strerror(errno));
 	}
 	
@@ -358,6 +375,9 @@ main(int argc, char **argv)
 	js_newcfunction(J, jsB_write, "write", 0);
 	js_setglobal(J, "write");
 
+	js_newcfunction(J, jsB_fexists, "fexists", 1);
+	js_setglobal(J, "fexists");
+	
 	js_newcfunction(J, jsB_fwrite, "fwrite", 2);
 	js_setglobal(J, "fwrite");
 
