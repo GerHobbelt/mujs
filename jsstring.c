@@ -221,7 +221,7 @@ static void Sp_substring_imp(js_State *J, const char *s, int a, int n)
 	Rune head_rune = 0, tail_rune = 0;
 	const char *head, *tail;
 	char *p;
-	int i, k, head_len, tail_len, mid_len;
+	int i, k, head_len, tail_len;
 
 	/* find start of substring */
 	head = s;
