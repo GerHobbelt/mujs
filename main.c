@@ -190,7 +190,8 @@ static void jsB_fread(js_State *J)
 	const char *filename = js_tostring(J, 1);
 	FILE *f;
 	char *s;
-	size_t n, t;
+	size_t t;
+	long n;
 
 	f = fopen(filename, "rb");
 	if (!f) {
