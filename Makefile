@@ -77,7 +77,7 @@ UnicodeData.txt:
 	curl -s -o $@ https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt
 
 utfdata.h: genucd.py UnicodeData.txt
-	python3 genucd.py UnicodeData.txt >$@
+	python genucd.py UnicodeData.txt > $@
 
 build/sanitize/mujs: main.c one.c $(SRCS) $(HDRS)
 	@mkdir -p $(@D)

@@ -73,7 +73,10 @@ def dumpmap(name, input):
 			print(hex(a)+","+str(n-a)+",")
 	print("};");
 
-print("/* This file was automatically created from " + sys.argv[1] + " */")
+print("/* This file was automatically created from " + sys.argv[1] + " using the genucd.py script. */")
+print("")
+print("// typedef signed int Rune; /* Code-point values in Unicode 4.0 are 21 bits wide.*/")
+print("")
 dumpalpha()
 dumpmap("ucd_tolower", tolower)
 dumpmap("ucd_toupper", toupper)
