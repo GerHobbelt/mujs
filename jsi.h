@@ -10,6 +10,7 @@
 #include <string.h>
 #include <setjmp.h>
 #include <math.h>
+#include <limits.h>
 #include <float.h>
 #include <limits.h>
 
@@ -52,9 +53,14 @@ static int jsW_snprintf(char *str, size_t size, const char *fmt, ...)
 #define isinf(x) (!_finite(x))
 #define isfinite(x) _finite(x)
 static __inline int signbit(double x) { __int64 i; memcpy(&i, &x, 8); return i>>63; }
-#define INFINITY (DBL_MAX+DBL_MAX)
-#define NAN (INFINITY-INFINITY)
 #endif
+#endif
+
+#ifndef INFINITY
+#define INFINITY (DBL_MAX+DBL_MAX)
+#endif
+#ifndef NAN
+#define NAN (INFINITY-INFINITY)
 #endif
 
 #define soffsetof(x,y) ((int)offsetof(x,y))
