@@ -417,6 +417,11 @@ static void Sp_toUpperCase(js_State *J)
 	js_free(J, dst);
 }
 
+static int isbol(js_Regexp *re, const char *text, const char *a)
+{
+	return a == text || ((re->flags & JS_REGEXP_M) && a[-1] == '\n');
+}
+
 static int istrim(int c)
 {
 	return c == 0x9 || c == 0xB || c == 0xC || c == 0x20 || c == 0xA0 || c == 0xFEFF ||
@@ -492,7 +497,7 @@ static void Sp_match(js_State *J)
 	a = text;
 	e = text + strlen(text);
 	while (a <= e) {
-		if (js_doregexec(J, re->prog, a, &m, a > text ? REG_NOTBOL : 0))
+		if (js_doregexec(J, re->prog, a, &m, isbol(re, text, a) ? 0 : REG_NOTBOL))
 			break;
 
 		b = m.sub[0].sp;
@@ -625,7 +630,7 @@ loop:
 			else
 				goto end;
 		}
-		if (!js_doregexec(J, re->prog, source, &m, REG_NOTBOL))
+		if (!js_doregexec(J, re->prog, source, &m, isbol(re, source0, source) ? 0 : REG_NOTBOL))
 			goto loop;
 	}
 
@@ -740,7 +745,7 @@ static void Sp_split_regexp(js_State *J)
 
 	p = a = text;
 	while (a < e) {
-		if (js_doregexec(J, re->prog, a, &m, a > text ? REG_NOTBOL : 0))
+		if (js_doregexec(J, re->prog, a, &m, isbol(re, text, a) ? 0 : REG_NOTBOL))
 			break; /* no match */
 
 		b = m.sub[0].sp;
