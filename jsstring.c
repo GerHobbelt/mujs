@@ -76,13 +76,18 @@ int js_utfptrtoidx(const char *s, const char *p)
 	int i = 0;
 	while (s < p) {
 		if (*(unsigned char *)s < Runeself)
+		{
 			++s;
+			++i;
+		}
 		else
+		{
 			s += chartorune(&rune, s);
-		if (rune >= 0x10000)
-			i += 2;
-		else
-			i += 1;
+			if (rune >= 0x10000)
+				i += 2;
+			else
+				i += 1;
+		}
 	}
 	return i;
 }
@@ -412,6 +417,11 @@ static void Sp_toUpperCase(js_State *J)
 	js_free(J, dst);
 }
 
+static int isbol(js_Regexp *re, const char *text, const char *a)
+{
+	return a == text || ((re->flags & JS_REGEXP_M) && a[-1] == '\n');
+}
+
 static int istrim(int c)
 {
 	return c == 0x9 || c == 0xB || c == 0xC || c == 0x20 || c == 0xA0 || c == 0xFEFF ||
@@ -462,6 +472,7 @@ static void Sp_match(js_State *J)
 	int len;
 	const char *a, *b, *c, *e;
 	Resub m;
+	Rune rune;
 
 	text = checkstring(J, 0);
 
@@ -486,7 +497,7 @@ static void Sp_match(js_State *J)
 	a = text;
 	e = text + strlen(text);
 	while (a <= e) {
-		if (js_doregexec(J, re->prog, a, &m, a > text ? REG_NOTBOL : 0))
+		if (js_doregexec(J, re->prog, a, &m, isbol(re, text, a) ? 0 : REG_NOTBOL))
 			break;
 
 		b = m.sub[0].sp;
@@ -497,7 +508,7 @@ static void Sp_match(js_State *J)
 
 		a = c;
 		if (c - b == 0)
-			++a;
+			a += chartorune(&rune, a);
 	}
 
 	if (len == 0) {
@@ -532,12 +543,12 @@ static void Sp_search(js_State *J)
 static void Sp_replace_regexp(js_State *J)
 {
 	js_Regexp *re;
-	const char *source, *s, *r;
+	const char *source, *source0, *s, *r;
 	js_Buffer *sb = NULL;
 	int n, x;
 	Resub m;
 
-	source = checkstring(J, 0);
+	source = source0 = checkstring(J, 0);
 	re = js_toregexp(J, 1);
 
 	if (js_doregexec(J, re->prog, source, &m, 0)) {
@@ -577,7 +588,7 @@ loop:
 				case 0: --r; /* end of string; back up */
 				/* fallthrough */
 				case '$': js_putc(J, &sb, '$'); break;
-				case '`': js_putm(J, &sb, source, s); break;
+				case '`': js_putm(J, &sb, source0, s); break;
 				case '\'': js_puts(J, &sb, s + n); break;
 				case '&':
 					js_putm(J, &sb, s, s + n);
@@ -619,7 +630,7 @@ loop:
 			else
 				goto end;
 		}
-		if (!js_doregexec(J, re->prog, source, &m, REG_NOTBOL))
+		if (!js_doregexec(J, re->prog, source, &m, isbol(re, source0, source) ? 0 : REG_NOTBOL))
 			goto loop;
 	}
 
@@ -709,6 +720,7 @@ static void Sp_split_regexp(js_State *J)
 	int limit, len, k;
 	const char *p, *a, *b, *c, *e;
 	Resub m;
+	Rune rune;
 
 	text = checkstring(J, 0);
 	re = js_toregexp(J, 1);
@@ -733,7 +745,7 @@ static void Sp_split_regexp(js_State *J)
 
 	p = a = text;
 	while (a < e) {
-		if (js_doregexec(J, re->prog, a, &m, a > text ? REG_NOTBOL : 0))
+		if (js_doregexec(J, re->prog, a, &m, isbol(re, text, a) ? 0 : REG_NOTBOL))
 			break; /* no match */
 
 		b = m.sub[0].sp;
@@ -741,7 +753,7 @@ static void Sp_split_regexp(js_State *J)
 
 		/* empty string at end of last match */
 		if (b == c && b == p) {
-			++a;
+			a += chartorune(&rune, a);
 			continue;
 		}
 

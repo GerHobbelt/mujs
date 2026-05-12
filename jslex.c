@@ -222,7 +222,7 @@ static void textpush(js_State *J, Rune c)
 		n = runelen(c);
 	if (J->lexbuf.len + n > J->lexbuf.cap) {
 		newcap = J->lexbuf.cap * 2;
-		J->lexbuf.text = js_realloc(J, J->lexbuf.text, J->lexbuf.cap);
+		J->lexbuf.text = js_realloc(J, J->lexbuf.text, newcap);
 		J->lexbuf.cap = newcap;
 	}
 	if (c == EOF)
@@ -496,7 +496,7 @@ static int isregexpcontext(int last)
 static int lexregexp(js_State *J)
 {
 	const char *s;
-	int g, m, i;
+	int g, m, i, flags;
 	int inclass = 0;
 
 	/* already consumed initial '/' */
@@ -544,10 +544,12 @@ static int lexregexp(js_State *J)
 		jsY_error(J, "duplicated flag in regular expression");
 
 	J->text = s;
-	J->number = 0;
-	if (g) J->number += JS_REGEXP_G;
-	if (i) J->number += JS_REGEXP_I;
-	if (m) J->number += JS_REGEXP_M;
+
+	flags = 0;
+	if (g) flags |= JS_REGEXP_G;
+	if (i) flags |= JS_REGEXP_I;
+	if (m) flags |= JS_REGEXP_M;
+	J->number = flags;
 	return TK_REGEXP;
 }
 
