@@ -173,6 +173,12 @@ static void Np_toPrecision(js_State *J)
 		numtostr(J, "%.*g", width, x);
 }
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+// warning C4756 : overflow in constant arithmetic
+#pragma warning(disable : 4756)
+#endif
+
 void jsB_initnumber(js_State *J)
 {
 	J->Number_prototype->u.number = 0;
@@ -196,3 +202,7 @@ void jsB_initnumber(js_State *J)
 	}
 	js_defglobal(J, "Number", JS_DONTENUM);
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif

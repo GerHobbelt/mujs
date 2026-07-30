@@ -222,6 +222,12 @@ double js_stringtofloat(const char *s, char **ep)
 	return 0;
 }
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+// warning C4756 : overflow in constant arithmetic
+#pragma warning(disable : 4756)
+#endif
+
 /* ToNumber() on a string */
 double jsV_stringtonumber(js_State *J, const char *s)
 {
@@ -242,6 +248,10 @@ double jsV_stringtonumber(js_State *J, const char *s)
 	if (*e) return NAN;
 	return n;
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 /* ToNumber() on a value */
 double jsV_tonumber(js_State *J, js_Value *v)

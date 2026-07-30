@@ -131,6 +131,12 @@ static void Math_tan(js_State *J)
 	js_pushnumber(J, tan(js_tonumber(J, 1)));
 }
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+// warning C4756 : overflow in constant arithmetic
+#pragma warning(disable : 4756)
+#endif
+
 static void Math_max(js_State *J)
 {
 	int i, n = js_gettop(J);
@@ -148,6 +154,10 @@ static void Math_max(js_State *J)
 	}
 	js_pushnumber(J, x);
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 static void Math_min(js_State *J)
 {

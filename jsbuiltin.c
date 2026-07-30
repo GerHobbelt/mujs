@@ -60,6 +60,12 @@ static void jsB_parseInt(js_State *J)
 		js_pushnumber(J, n * sign);
 }
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+// warning C4756 : overflow in constant arithmetic
+#pragma warning(disable : 4756)
+#endif
+
 static void jsB_parseFloat(js_State *J)
 {
 	const char *s = js_tostring(J, 1);
@@ -81,6 +87,10 @@ static void jsB_parseFloat(js_State *J)
 			js_pushnumber(J, n);
 	}
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 static void jsB_isNaN(js_State *J)
 {
@@ -190,6 +200,12 @@ static void jsB_encodeURIComponent(js_State *J)
 	Encode(J, js_tostring(J, 1), URIUNESCAPED);
 }
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+// warning C4756 : overflow in constant arithmetic
+#pragma warning(disable : 4756)
+#endif
+
 void jsB_init(js_State *J)
 {
 	/* Create the prototype objects here, before the constructors */
@@ -249,3 +265,7 @@ void jsB_init(js_State *J)
 	jsB_globalf(J, "encodeURI", jsB_encodeURI, 1);
 	jsB_globalf(J, "encodeURIComponent", jsB_encodeURIComponent, 1);
 }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
